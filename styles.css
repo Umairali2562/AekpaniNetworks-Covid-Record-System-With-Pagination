@@ -1,0 +1,11 @@
+.text-center{
+    text-align: center;
+}
+
+.table-bordered{
+    border:1px solid black;
+}
+
+.toright{
+    padding-left:80%;
+}
