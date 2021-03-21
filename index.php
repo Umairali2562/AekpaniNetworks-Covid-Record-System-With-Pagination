@@ -116,6 +116,7 @@ if(isset($_POST['limit-records'])) {
 $(document).ready(function () {
     $('table').DataTable({
         "bLengthChange": false,
+        "searching": false,
         "bFilter": true,
         "bInfo": true,
         "bAutoWidth": true
