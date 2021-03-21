@@ -3,11 +3,13 @@
 $query="select * from customers";
 $result=mysqli_query($conn,$query);
 
+//the limit
 
 
-//this query is for the pagination
-$query="select * from customers";
-$result1=mysqli_query($conn,$query);
+if(isset($_POST['limit-records'])) {
+    $limit=$_POST['limit-records'];
+    echo $limit;
+}
  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,12 +50,27 @@ $result1=mysqli_query($conn,$query);
 </div>
 
 
+    <div class="row">
+
+        <div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
+
+
+                <form method="post" action="#">
+                    <select name="limit-records" id="limit-records">
+                        <option disabled="disabled" selected="selected">---Limit Records---</option>
+                        <?php foreach([10,100,500,1000,5000] as $limit): ?>
+                            <option <?php if( isset($_POST["limit-records"]) && $_POST["limit-records"] == $limit) echo "selected" ?> value="<?= $limit; ?>"><?= $limit; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
+
+    </div>
+
 
 
     <div class="row">
         <div class="col-sm-12">
-
-
             <div style="height: 600px; overflow-y: auto;">
                 <table id="" class="table table-hover table-striped table-striped table-bordered">
                     <thead>
@@ -87,8 +104,22 @@ $result1=mysqli_query($conn,$query);
 
 
 <script type="text/javascript">
+    $(document).ready(function(){
+        $("#limit-records").change(function(){
+            $('form').submit();
+        })
+    })
+</script>
+
+
+<script type="text/javascript">
 $(document).ready(function () {
-    $('table').DataTable();
+    $('table').DataTable({
+        "bLengthChange": false,
+        "bFilter": true,
+        "bInfo": true,
+        "bAutoWidth": true
+    });
 });
 </script>
 
