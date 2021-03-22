@@ -17,7 +17,7 @@ if(isset($_POST['limit-records'])) {
 
 //if the session variable is empty then assign item_per_page a value of 500 else assgin it the session variable
 if(empty($_SESSION['item_per_page'])){
-    $item_per_page=500;
+    $_SESSION['item_per_page']=500;
 }
 else{
     $item_per_page=$_SESSION['item_per_page'];
@@ -96,13 +96,9 @@ $row_count=mysqli_num_rows($result1);
                 <form method="post" action="#">
                     <select name="limit-records" id="limit-records">
                         <option disabled="disabled" selected="selected">
-                            <?php
-                            if(isset($_SESSION['item_per_page'])){
-                                echo $_SESSION['item_per_page'];
-                            }
-                            else{
+                          <?php
                                 echo "--LIMIT-RECORD--";
-                            }
+
                             ?>
 
                         </option>
@@ -149,18 +145,25 @@ $row_count=mysqli_num_rows($result1);
     <div class="row">
         <div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
+                <ul class="pagination pagination-sm justify-content-end">
                     <li class="page-item">
                         <a class="page-link" href="index.php?page=<?php echo $page-1; ?>">Previous</a>
                     </li>
 
                     <?php
                     for($i=1;$i<=$totalpages;$i++){//actual link
-                        if($i===$page){
+
+                        if($i==$page){
                             echo "<li class='page-item'><a  class='page-link active' href='index.php?page=$i' >$i</a></li>";
                         }
                         else{
+                            if($i>10){
+                                $lastpage=$totalpages-1;
+                                echo "<li  class='page-item'><a href='index.php?page=$lastpage' class='page-link' >..</a></li>";
+                            break;
+                            }else{
                             echo "<li  class='page-item'><a href='index.php?page=$i' class='page-link' >$i</a></li>";
+                            }
                         }
 
                     } ?>
@@ -176,6 +179,20 @@ $row_count=mysqli_num_rows($result1);
     </div>
 
 </div>
+
+
+
+<script>
+    // Add active class to the current button (highlight it)
+
+    function activee() {
+            var current = document.getElementsByClassName("active");
+            current[0].className = current[0].className.replace(" active", "");
+            this.className += " active";
+        }
+    }
+</script>
+
 
 <script>
     function loadDoc() {
