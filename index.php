@@ -88,7 +88,7 @@ $row_count=mysqli_num_rows($result1);
 </div>
 
 
-    <div class="row">
+    <div class="row acc-to-the-search">
 
         <div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
 
@@ -182,16 +182,7 @@ $row_count=mysqli_num_rows($result1);
 
 
 
-<script>
-    // Add active class to the current button (highlight it)
 
-    function activee() {
-            var current = document.getElementsByClassName("active");
-            current[0].className = current[0].className.replace(" active", "");
-            this.className += " active";
-        }
-    }
-</script>
 
 
 <script>
@@ -207,6 +198,19 @@ $row_count=mysqli_num_rows($result1);
         xhttp.send();
     }
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('table').dataTable({
+            searching: true,
+            paging: false,
+            info: false,
+            bPaginate: false,
+            bLengthChange: false,
+        });
+    })
+</script>
+
 
 <script type="text/javascript">
     $(document).ready(function(){

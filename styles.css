@@ -17,5 +17,11 @@
 }
 
 .active{
-    background-color: turquoise;
+    background-color: #007bff;
+    color:white;
+}
+
+.acc-to-the-search{
+    position: relative;
+    top:29px;
 }
