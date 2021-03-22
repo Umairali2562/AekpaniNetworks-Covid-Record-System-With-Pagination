@@ -22,6 +22,7 @@
 }
 
 .acc-to-the-search{
+    width: 50%;
     position: relative;
     top:29px;
     z-index:1;
