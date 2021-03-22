@@ -1,16 +1,54 @@
-<?php 
+<?php
+session_start();
 	include 'conn.php';
 $query="select * from customers";
 $result=mysqli_query($conn,$query);
 
-//the limit
+//pagination
 
+$total="select * from customers";
+$count=mysqli_query($conn,$total);
+$nr=mysqli_num_rows($count);
 
+//if we get data from the post then save it in a session variable
 if(isset($_POST['limit-records'])) {
-    $limit=$_POST['limit-records'];
-    echo $limit;
+    $_SESSION['item_per_page'] = $_POST['limit-records'];
 }
+
+//if the session variable is empty then assign item_per_page a value of 500 else assgin it the session variable
+if(empty($_SESSION['item_per_page'])){
+    $item_per_page=500;
+}
+else{
+    $item_per_page=$_SESSION['item_per_page'];
+}
+
+$item_per_page=$_SESSION['item_per_page'];
+
+$totalpages=ceil($nr/$item_per_page);
+
+if(isset($_GET['page'])&& !empty($_GET['page'])){
+$page=$_GET['page'];
+}
+else{
+    $page=1;
+}
+
+$offset=($page-1)*$item_per_page;
+$q="select * from customers limit $item_per_page OFFSET $offset";
+$result1=mysqli_query($conn,$q);
+$row_count=mysqli_num_rows($result1);
+
+
+
+//this is for the number of records per page...
+
+
+
+
  ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -37,7 +75,7 @@ if(isset($_POST['limit-records'])) {
 
 
 </head>
-<body>
+<body id="mytable">
 
 
 <div class="container-fluid">
@@ -57,7 +95,17 @@ if(isset($_POST['limit-records'])) {
 
                 <form method="post" action="#">
                     <select name="limit-records" id="limit-records">
-                        <option disabled="disabled" selected="selected">---Limit Records---</option>
+                        <option disabled="disabled" selected="selected">
+                            <?php
+                            if(isset($_SESSION['item_per_page'])){
+                                echo $_SESSION['item_per_page'];
+                            }
+                            else{
+                                echo "--LIMIT-RECORD--";
+                            }
+                            ?>
+
+                        </option>
                         <?php foreach([10,100,500,1000,5000] as $limit): ?>
                             <option <?php if( isset($_POST["limit-records"]) && $_POST["limit-records"] == $limit) echo "selected" ?> value="<?= $limit; ?>"><?= $limit; ?></option>
                         <?php endforeach; ?>
@@ -83,7 +131,7 @@ if(isset($_POST['limit-records'])) {
                     </tr>
                     </thead>
                     <tbody>
-                   <?php while($customer=mysqli_fetch_assoc($result)){  ?>
+                   <?php while($customer=mysqli_fetch_assoc($result1)){  ?>
                         <tr>
                             <td><?= $customer['id']; ?></td>
                             <td><?= $customer['name']; ?></td>
@@ -96,12 +144,52 @@ if(isset($_POST['limit-records'])) {
                 </table>
             </div>
         </div>
+    </div> <!--- row of table ends here !-->
 
+    <div class="row">
+        <div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item">
+                        <a class="page-link" href="index.php?page=<?php echo $page-1; ?>">Previous</a>
+                    </li>
+
+                    <?php
+                    for($i=1;$i<=$totalpages;$i++){//actual link
+                        if($i===$page){
+                            echo "<li class='page-item'><a  class='page-link active' href='index.php?page=$i' >$i</a></li>";
+                        }
+                        else{
+                            echo "<li  class='page-item'><a href='index.php?page=$i' class='page-link' >$i</a></li>";
+                        }
+
+                    } ?>
+
+
+                    <li class="page-item">
+                        <a class="page-link" href="index.php?page=<?php echo $page+1; ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
     </div>
-
 
 </div>
 
+<script>
+    function loadDoc() {
+        var i=0;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("mytable").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "index.php?page=7", true);
+        xhttp.send();
+    }
+</script>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -112,17 +200,6 @@ if(isset($_POST['limit-records'])) {
 </script>
 
 
-<script type="text/javascript">
-$(document).ready(function () {
-    $('table').DataTable({
-        "bLengthChange": false,
-        "searching": false,
-        "bFilter": true,
-        "bInfo": true,
-        "bAutoWidth": true
-    });
-});
-</script>
 
 
 </body>
